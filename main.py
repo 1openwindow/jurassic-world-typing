@@ -15,17 +15,21 @@ BLACK = (0, 0, 0)
 RED = (255, 0, 0)
 GREEN = (0, 255, 0)
 BLUE = (0, 0, 255)
+YELLOW = (255, 255, 0)
+CYAN = (0, 255, 255)
+MAGENTA = (255, 0, 255)
 
-# Font
-FONT_SIZE = 48
-font = pygame.font.Font(None, FONT_SIZE)
+# Font sizes
+FONT_SIZE = 72  # Increased font size for letters
+font = pygame.font.Font("pixel_font.ttf", FONT_SIZE)
+button_font = pygame.font.Font("pixel_font.ttf", 48)  # Font size for button
 
 # Set up display
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 pygame.display.set_caption("Typing Ninja")
 
 # Load background image
-background_image = pygame.image.load("jurassic_background.jpg")
+background_image = pygame.image.load("pixel_background.png")
 background_image = pygame.transform.scale(
     background_image, (SCREEN_WIDTH, SCREEN_HEIGHT))
 
@@ -53,7 +57,7 @@ class Button:
             pygame.draw.rect(screen, self.hover_color, self.rect)
         else:
             pygame.draw.rect(screen, self.color, self.rect)
-        text_surface = font.render(self.text, True, BLACK)
+        text_surface = button_font.render(self.text, True, BLACK)
         screen.blit(text_surface, (self.x + (self.width - text_surface.get_width()) // 2,
                                    self.y + (self.height - text_surface.get_height()) // 2))
 
@@ -72,9 +76,11 @@ class Letter:
         self.x = x
         self.y = y
         self.speed = speed
+        self.color = random.choice(
+            [RED, GREEN, BLUE, YELLOW, CYAN, MAGENTA, WHITE])
 
     def draw(self, screen):
-        text_surface = font.render(self.char, True, WHITE)
+        text_surface = font.render(self.char, True, self.color)
         screen.blit(text_surface, (self.x, self.y))
 
     def update(self):
@@ -100,7 +106,7 @@ def main():
     game_started = False
 
     start_button = Button("Start", SCREEN_WIDTH // 2 - 100,
-                          SCREEN_HEIGHT // 2 - 50, 200, 100, GREEN, BLUE)
+                          SCREEN_HEIGHT - 150, 200, 100, GREEN, BLUE)
 
     while True:
         for event in pygame.event.get():
@@ -137,7 +143,7 @@ def main():
                 letter.draw(screen)
 
             # Draw score
-            score_surface = font.render(f"Score: {score}", True, RED)
+            score_surface = button_font.render(f"Score: {score}", True, RED)
             screen.blit(score_surface, (10, 10))
         else:
             start_button.draw(screen)
