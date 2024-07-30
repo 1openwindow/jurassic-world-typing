@@ -5,9 +5,9 @@ import sys
 # Initialize Pygame
 pygame.init()
 
-# Screen dimensions
-SCREEN_WIDTH = 800
-SCREEN_HEIGHT = 600
+# Screen dimensions (16:9 aspect ratio)
+SCREEN_WIDTH = 1920
+SCREEN_HEIGHT = 1080
 
 # Colors
 WHITE = (255, 255, 255)
@@ -23,6 +23,15 @@ font = pygame.font.Font(None, FONT_SIZE)
 # Set up display
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 pygame.display.set_caption("Typing Ninja")
+
+# Load background image
+background_image = pygame.image.load("jurassic_background.jpg")
+background_image = pygame.transform.scale(
+    background_image, (SCREEN_WIDTH, SCREEN_HEIGHT))
+
+# Load background music
+pygame.mixer.music.load("background_music.mp3")
+pygame.mixer.music.play(-1)  # Play the music indefinitely
 
 # Button class
 
@@ -45,9 +54,8 @@ class Button:
         else:
             pygame.draw.rect(screen, self.color, self.rect)
         text_surface = font.render(self.text, True, BLACK)
-        text_x = self.x + (self.width - text_surface.get_width()) // 2
-        text_y = self.y + (self.height - text_surface.get_height()) // 2
-        screen.blit(text_surface, (text_x, text_y))
+        screen.blit(text_surface, (self.x + (self.width - text_surface.get_width()) // 2,
+                                   self.y + (self.height - text_surface.get_height()) // 2))
 
     def is_clicked(self, event):
         if event.type == pygame.MOUSEBUTTONDOWN:
@@ -95,8 +103,6 @@ def main():
                           SCREEN_HEIGHT // 2 - 50, 200, 100, GREEN, BLUE)
 
     while True:
-        screen.fill(BLACK)
-
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
@@ -122,6 +128,10 @@ def main():
                 if letter.y > SCREEN_HEIGHT:
                     letters.remove(letter)
 
+        # Draw background
+        screen.blit(background_image, (0, 0))
+
+        if game_started:
             # Draw letters
             for letter in letters:
                 letter.draw(screen)
